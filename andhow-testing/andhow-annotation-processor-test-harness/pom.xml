@@ -4,6 +4,7 @@
 		<groupId>org.yarnandtail</groupId>
 		<artifactId>andhow-parent</artifactId>
 		<version>0.4.1-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>andhow-annotation-processor-test-harness</artifactId>
@@ -18,5 +19,11 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>andhow-core</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
     </dependencies>
 </project>

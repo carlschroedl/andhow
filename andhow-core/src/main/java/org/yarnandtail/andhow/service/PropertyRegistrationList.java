@@ -5,18 +5,32 @@ import java.util.*;
 /**
  * A List of Registrations with simplified add methods that make it
  * efficient (source code wise) to add Registrations.
- *
+ * <p>
  * Registrations that share the same inner path (that is, the same nested
  * inner class parents) can just be added with no inner path specified and
  * they will be assumed to use the same path as the previous entry.
- *
+ * <p>
  * Since the source code that calls these add methods is generated and
  * potentially verbose, its nice to have an efficient way to do it.
- *
+ * <p>
  * This class is modifiable and it is assumed that a new list is generated
  * each time it is requested, ie, an instance is constructed directly in
  * a 'get' method.  The get method will likely only be called once during its
  * lifecycle.
+ * 
+ * <h3>Property registration background</h3>
+ * At compile time, the AndHowCompileProcessor (an annotation Processor), reads
+ * user classes and generates a PropertyRegistrar instance for each root class
+ * (non-inner class) that contains an AndHow {@code Property}.
+ * Matching service files are also generated in the "META-INF/services/"
+ * directory so the {@code PropertyRegistrar} instances can be discovered
+ * through the {@code java.util.ServiceLoader} mechanism.
+ * <p>
+ * At run time, the {@code PropertyRegistrarLoader} discovers all
+ * {@code PropertyRegistrar} instances.
+ * Each {@code PropertyRegistrar} creates a {@code PropertyRegistrationList}
+ * instance with a {@code PropertyRegistration} for each {@code Property}
+ * present in the jar.
  */
 public class PropertyRegistrationList extends ArrayList<PropertyRegistration> {
 
@@ -37,7 +51,7 @@ public class PropertyRegistrationList extends ArrayList<PropertyRegistration> {
 	 * The root / top level class which contains (either directly or indirectly)
 	 * the properties listed within it.
 	 * 
-	 * @return 
+	 * @return The Java canonical name of the root class.
 	 */
 	public String getRootCanonicalName() {
 		return rootCanonName;
@@ -50,8 +64,8 @@ public class PropertyRegistrationList extends ArrayList<PropertyRegistration> {
 	 * Even if the passed registration has a null or empty inner path, it
 	 * will be assumed to be correct, meaning a root property.
 	 *
-	 * @param reg
-	 * @return
+	 * @param reg The {@code PropertyRegistration} to add to the end of the list.
+	 * @return True if it was added (it is always added).
 	 */
 	@Override
 	public boolean add(PropertyRegistration reg) {
@@ -68,7 +82,7 @@ public class PropertyRegistrationList extends ArrayList<PropertyRegistration> {
 	 *
 	 * @param name Name of the AndHow property, which is the name of the variable it
 	 *		is assigned to at construction.
-	 * @return
+	 * @return True if it was added (it is always added).
 	 */
 	public boolean add(String name) {
 		PropertyRegistration reg;
@@ -91,7 +105,7 @@ public class PropertyRegistrationList extends ArrayList<PropertyRegistration> {
 	 * @param name Name of the AndHow property, which is the name of the variable it
 	 *		is assigned to at construction.
 	 * @param innerPath
-	 * @return
+	 * @return True if it was added (it is always added).
 	 */
 	public boolean add(String name, String... innerPath) {
 		PropertyRegistration reg = new PropertyRegistration(rootCanonName, name, innerPath);
@@ -108,10 +122,11 @@ public class PropertyRegistrationList extends ArrayList<PropertyRegistration> {
 	 * @param name Name of the AndHow property, which is the name of the variable it
 	 *		is assigned to at construction.
 	 * @param innerPath The 'path' of nested inner class/interfaces from outer to inner
-	 * @return
+	 * @return True if it was added (it is always added).
 	 */
 	public boolean add(String name, List<String> innerPath) {
-		PropertyRegistration reg = new PropertyRegistration(rootCanonName, name, innerPath);
+		String[] innerPathArray = (innerPath == null) ? null : innerPath.toArray(new String[innerPath.size()]);
+		PropertyRegistration reg = new PropertyRegistration(rootCanonName, name, innerPathArray);
 		lastReg = reg;
 		return super.add(reg);
 	}

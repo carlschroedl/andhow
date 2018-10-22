@@ -4,19 +4,21 @@
 		<groupId>org.yarnandtail</groupId>
 		<artifactId>andhow-parent</artifactId>
 		<version>0.4.1-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>andhow-system-tests</artifactId>
 	<packaging>jar</packaging>
 	<name>AndHow System Tests</name>
 	<description>
-		System tests that require running the entire AndHow framework.
+		System tests that require running the entire AndHow framework, including the annotation compiler
+		and Property and configuration self-discovery.
 	</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>andhow-core</artifactId>
+			<artifactId>andhow</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
